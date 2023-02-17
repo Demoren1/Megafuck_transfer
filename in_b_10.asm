@@ -10,7 +10,7 @@
 
 base_10  proc
 
-mov cx, 9              ;counter
+mov cx, 5              ;counter
 add bx, 16
 
 @@Next:     

@@ -28,7 +28,7 @@ mov bx, 0b800h              ;get shift for video
 mov es, bx
 
 mov ax, 5           ;x coordinate [0, 80]
-mov bx, 16          ;y coordinate [0, 25]
+mov bx, 13          ;y coordinate [0, 25]
 
 call shift_x_y
 ;push bx             ;absolute save of shift
@@ -37,7 +37,7 @@ call shift_x_y
 push bx                                     
 
 sub bx, 160d * 4
-add bx, 30d
+add bx, 50d
 push bx
 mov ax, offset first_msg
 call prtn_str
@@ -60,7 +60,7 @@ push ax            ;saving first num
 push bx            ;display second num
 
 sub bx, 160d * 4
-add bx, 64d
+add bx, 84d
 push bx
 mov ax, offset second_msg
 call prtn_str
@@ -106,44 +106,58 @@ add bx, 160d
 pop dx              ;second num
 pop cx              ;first num
 
-add dx, cx
-mov ax, dx
-
-push bx             ;saving absolute shift
-call input_num      ;num for trans
-pop bx
-
 push bx             ;absolute save bx
-push ax
+push cx             ;save first num
+push dx             ;save second num
+
+add cx, dx
+mov ax, cx
+call num_in_row
+
+add bx, 160d
+add bx, 40d
+
+pop dx
+pop cx
+
+push cx
+push dx
+
+sub cx, dx
+mov ax, cx
+call num_in_row
+
+add bx, 160d
+add bx, 40d
+
+pop dx
+pop cx
+push cx
+push dx
+
+mov ax, cx
+xchg cx, dx
+xor dx, dx
+mul cx
 
 call num_in_row
 
 add bx, 160d
 add bx, 40d
 
-pop ax
-push ax
+pop dx
+pop cx 
+
+mov ax, cx
+xchg cx, dx
+xor dx, dx
+div cx
 call num_in_row
 
-add bx, 160d
-add bx, 40d
-
-pop ax
-push ax
-call num_in_row
-
-add bx, 160d
-add bx, 40d
-
-pop ax
-push ax
-call num_in_row
-
-pop ax
 pop bx              ;pulling out absolute save
 
 mov cx, 70                     ;width
-mov dx, 12                      ;hight
+mov dx, 8                      ;hight
 sub bx, 160d * 6               ;up on 2 lines to contain words
 call prnt_frame
 
