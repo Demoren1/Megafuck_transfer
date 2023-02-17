@@ -1,6 +1,6 @@
 ;----------------------------------
 ;               input_num
-;Entry:         cx = len of num < 8
+;Entry:         None
 ;Exit:          ax = num
 ;Expects:       locals @@
 ;               .386

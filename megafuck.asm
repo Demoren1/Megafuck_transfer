@@ -20,60 +20,131 @@ sum_msg db "SUM$"
 sub_msg db "SUB$"
 mul_msg db "MUL$"
 div_msg db "DIV$"
+first_msg db "First msg$"
+second_msg db "Second msg$"
 
 main:
 mov bx, 0b800h              ;get shift for video
 mov es, bx
 
-mov ax, 10          ;x coordinate [0, 80]
-mov bx, 10          ;y coordinate [0, 25]
+mov ax, 5           ;x coordinate [0, 80]
+mov bx, 16          ;y coordinate [0, 25]
 
 call shift_x_y
+;push bx             ;absolute save of shift
 
-push bx             ;absolute save bx
+;display first num
+push bx                                     
 
-add bx, 26d
-mov ax, offset sum_msg
+sub bx, 160d * 4
+add bx, 30d
+push bx
+mov ax, offset first_msg
 call prtn_str
-
-add bx, 26d
-mov ax, offset sub_msg
-call prtn_str
-
-pop bx              ;pulling out absolute save
-add bx, 160d
+pop bx
 
 push bx             ;saving absolute shift
 call input_num      ;num for trans
 pop bx
 
-mov cx, 3            ;saving num(ax) and shift(bx)
-@@fill_stck:  
-                push ax
-                push bx
-                loop @@fill_stck
-
-call base_2
-
-pop bx
+add bx, 160d
+sub bx, 14d
+push ax
+call num_in_row
 pop ax
 
-add bx, 174d        ;to shift on next string
-call base_10
-
 pop bx
+push ax            ;saving first num
+
+;display second num
+push bx            ;display second num
+
+sub bx, 160d * 4
+add bx, 64d
+push bx
+mov ax, offset second_msg
+call prtn_str
+pop bx
+
+push bx             ;saving absolute shift
+call input_num      ;num for trans
+pop bx
+
+add bx, 160d
+sub bx, 12d
+push ax
+call num_in_row
 pop ax
 
-add bx, (160 + 11) * 2        ;to shift on next string
-call base_16
-
 pop bx
-sub bx, 160d
-sub bx, 4d
+push ax             ;saving second num
 
-mov cx, 60                      ;width
-mov dx, 6                      ;hight
-sub bx, 160d * 2                ;up on 2 lines to contain words
+;true program below
+
+push bx             ;absolute save bx
+
+add bx, 26d
+
+mov ax, offset sum_msg
+call prtn_str
+
+add bx, 30d
+mov ax, offset sub_msg
+call prtn_str
+
+add bx, 30d
+mov ax, offset mul_msg
+call prtn_str
+
+add bx, 30d
+mov ax, offset div_msg
+call prtn_str
+
+pop bx              ;pulling out absolute save
+add bx, 160d
+
+pop dx              ;second num
+pop cx              ;first num
+
+add dx, cx
+mov ax, dx
+
+push bx             ;saving absolute shift
+call input_num      ;num for trans
+pop bx
+
+push bx             ;absolute save bx
+push ax
+
+call num_in_row
+
+add bx, 160d
+add bx, 40d
+
+pop ax
+push ax
+call num_in_row
+
+add bx, 160d
+add bx, 40d
+
+pop ax
+push ax
+call num_in_row
+
+add bx, 160d
+add bx, 40d
+
+pop ax
+push ax
+call num_in_row
+
+pop ax
+pop bx              ;pulling out absolute save
+
+mov cx, 70                     ;width
+mov dx, 12                      ;hight
+sub bx, 160d * 6               ;up on 2 lines to contain words
 call prnt_frame
 
 mov ax, 4c00h

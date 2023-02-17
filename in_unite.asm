@@ -8,6 +8,7 @@
 ;-----------------------------------
 num_in_row proc
 
+push bx
 push ax
 push bx
 push ax
